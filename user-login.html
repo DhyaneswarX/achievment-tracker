@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-card { max-width: 400px; margin: 80px auto; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(80,80,180,0.10); padding: 2.5rem; }
+    .login-card h2 { color: #6c5ce7; margin-bottom: 2rem; text-align: center; }
+    .login-card input { width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 1.2rem; }
+    .login-card button { width: 100%; background: #6c5ce7; color: #fff; border: none; border-radius: 8px; padding: 0.7rem; font-weight: 600; cursor: pointer; }
+    .error-msg { color: #d63031; font-weight: 600; margin-bottom: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h2>User Login</h2>
+    <form id="user-login-form">
+      <div class="error-msg" id="user-error" style="display:none;"></div>
+  <input type="email" id="user-email" placeholder="User Email" required>
+  <input type="password" id="user-password" placeholder="User Password" required>
+  <button type="submit">Login as User</button>
+    </form>
+    <a href="signup.html" id="to-signup" style="margin-top:2rem; color:#4078c0; font-weight:600; display:block; text-align:center;">Don't have an account? Sign Up</a>
+  </div>
+  <script>
+    document.getElementById('user-login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const email = document.getElementById('user-email').value.trim();
+      const password = document.getElementById('user-password').value;
+      // Check user credentials from localStorage 'users' key
+      let users = localStorage.getItem('users');
+      users = users ? JSON.parse(users) : [];
+      const user = users.find(u => u.email === email && u.password === password);
+      if (user) {
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        window.location.href = 'dashboard.html';
+      } else {
+        document.getElementById('user-error').textContent = 'Invalid user credentials!';
+        document.getElementById('user-error').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

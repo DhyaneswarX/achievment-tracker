@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Events</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f6f8fa; }
+    .admin-sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #4078c0 60%, #6c5ce7 100%);
+      color: #fff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      box-shadow: 2px 0 8px rgba(80,80,180,0.10);
+    }
+    .admin-sidebar h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .admin-sidebar a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.7rem;
+      transition: background 0.2s;
+      display: block;
+    }
+    .admin-sidebar a:hover, .admin-sidebar a.active {
+      background: rgba(255,255,255,0.12);
+    }
+    .admin-main {
+      margin-left: 240px;
+      max-width: 1100px;
+      padding: 2.5rem 2rem;
+    }
+    .admin-header {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #4078c0;
+      margin-bottom: 2rem;
+    }
+    .event-form {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(80,80,180,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      max-width: 600px;
+    }
+    .event-form label { font-weight: 600; color: #4078c0; margin-bottom: 0.3rem; display: block; }
+    .event-form input, .event-form select, .event-form textarea {
+      width: 100%;
+      padding: 0.7rem;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .event-form button {
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      padding: 0.7rem 1.5rem;
+      background: #4078c0;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .event-form button:hover { background: #6c5ce7; }
+    .events-list {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(80,80,180,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(80,80,180,0.07);
+      overflow: hidden;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 600;
+      color: #4078c0;
+      border-bottom: 1px solid #eee;
+      padding: 0.7rem;
+      text-align: left;
+    }
+    td {
+      font-size: 1rem;
+      color: #23232b;
+      padding: 0.7rem;
+      border-bottom: 1px solid #eee;
+    }
+    .action-btn {
+      font-size: 0.98rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      padding: 0.4rem 1rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-edit { background: #4078c0; color: #fff; }
+    .action-delete { background: #d63031; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="admin-sidebar">
+    <h2>Admin Panel</h2>
+    <a href="admin-dashboard.html">Dashboard</a>
+    <a href="pending-approvals.html">Pending Approvals</a>
+    <a href="all-achievements.html">All Achievements</a>
+    <a href="manage-events.html" class="active">Manage Events</a>
+  </div>
+  <div class="admin-main">
+    <div class="admin-header">Manage Events</div>
+    <form class="event-form" id="event-form">
+      <label for="event-title">Event Title</label>
+      <input type="text" id="event-title" required>
+      <label for="event-category">Category</label>
+      <select id="event-category" required>
+        <option value="">Select Category</option>
+        <option value="Sports">Sports</option>
+        <option value="Tech">Tech</option>
+        <option value="Cultural">Cultural</option>
+        <option value="Volunteering">Volunteering</option>
+      </select>
+      <label for="event-datetime">Date & Time</label>
+      <input type="datetime-local" id="event-datetime" required>
+      <label for="event-venue">Venue</label>
+      <input type="text" id="event-venue" required>
+      <label for="event-description">Description</label>
+      <textarea id="event-description" rows="3" required></textarea>
+      <label for="event-deadline">Registration Deadline</label>
+      <input type="date" id="event-deadline" required>
+      <button type="submit">➕ Add New Event</button>
+    </form>
+    <div class="events-list" id="events-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Date & Time</th>
+            <th>Venue</th>
+            <th>Description</th>
+            <th>Registration Deadline</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="events-table-body">
+          <!-- Table rows will be rendered here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function getEvents() {
+      let data = localStorage.getItem('events');
+      return data ? JSON.parse(data) : [];
+    }
+    function saveEvents(events) {
+      localStorage.setItem('events', JSON.stringify(events));
+    }
+    function renderEventsList() {
+      const tbody = document.getElementById('events-table-body');
+      tbody.innerHTML = '';
+      const events = getEvents();
+      events.forEach((event, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${event.title}</td>
+          <td>${event.category}</td>
+          <td>${event.datetime}</td>
+          <td>${event.venue}</td>
+          <td>${event.description}</td>
+          <td>${event.deadline}</td>
+          <td>
+            <button class='action-btn action-edit' onclick="editEvent(${idx})">📝</button>
+            <button class='action-btn action-delete' onclick="deleteEvent(${idx})">❌</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    document.getElementById('event-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const events = getEvents();
+      const newEvent = {
+        title: document.getElementById('event-title').value,
+        category: document.getElementById('event-category').value,
+        datetime: document.getElementById('event-datetime').value,
+        venue: document.getElementById('event-venue').value,
+        description: document.getElementById('event-description').value,
+        deadline: document.getElementById('event-deadline').value
+      };
+      events.push(newEvent);
+      saveEvents(events);
+      renderEventsList();
+      document.getElementById('event-form').reset();
+    });
+    function editEvent(idx) {
+      const events = getEvents();
+      const event = events[idx];
+      document.getElementById('event-title').value = event.title;
+      document.getElementById('event-category').value = event.category;
+      document.getElementById('event-datetime').value = event.datetime;
+      document.getElementById('event-venue').value = event.venue;
+      document.getElementById('event-description').value = event.description;
+      document.getElementById('event-deadline').value = event.deadline;
+      deleteEvent(idx);
+    }
+    function deleteEvent(idx) {
+      const events = getEvents();
+      events.splice(idx, 1);
+      saveEvents(events);
+      renderEventsList();
+    }
+    renderEventsList();
+  </script>
+</body>
+</html>

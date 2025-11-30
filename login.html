@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container" style="min-height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; background: linear-gradient(135deg, #74b9ff 0%, #a29bfe 100%);">
+    <div style="text-align:center; margin-bottom:2.5rem;">
+      <img src="https://img.icons8.com/color/96/000000/trophy.png" alt="Trophy" style="width:72px; height:72px; margin-bottom:1rem;">
+      <h2 style="margin-bottom:0.7rem; font-size:2.2rem; color:#23232b; font-weight:800; letter-spacing:1px;">Welcome to Extracurricular Activity Tracker</h2>
+      <div style="font-size:1.15rem; color:#4078c0; font-weight:600; margin-bottom:0.5rem;">Track, manage, and celebrate your achievements!</div>
+    </div>
+    <div style="display:flex; gap:3rem; justify-content:center; align-items:center; width:100%; max-width:700px;">
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+        <button id="admin-btn" style="width:100%; background:#4078c0; color:#fff; border:none; border-radius:18px; padding:3rem 2rem; font-size:2rem; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(80,80,180,0.10); transition:background 0.2s; display:flex; flex-direction:column; align-items:center; gap:1rem;">
+          <img src="https://img.icons8.com/color/64/000000/administrator-male.png" alt="Admin" style="width:48px; height:48px;">
+          Admin
+        </button>
+      </div>
+      <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
+        <button id="user-btn" style="width:100%; background:#6c5ce7; color:#fff; border:none; border-radius:18px; padding:3rem 2rem; font-size:2rem; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(80,80,180,0.10); transition:background 0.2s; display:flex; flex-direction:column; align-items:center; gap:1rem;">
+          <img src="https://img.icons8.com/color/64/000000/student-male.png" alt="User" style="width:48px; height:48px;">
+          User
+        </button>
+      </div>
+    </div>
+    <div style="margin-top:3rem; text-align:center; color:#23232b; font-size:1.05rem; opacity:0.7;">
+      <span style="background:#fff; border-radius:8px; padding:0.7rem 1.5rem; box-shadow:0 2px 8px rgba(80,80,180,0.10); font-weight:500;">Made with Love for student success</span>
+    </div>
+  </div>
+  <script>
+    document.getElementById('admin-btn').onclick = function() {
+      window.location.href = 'admin-login.html';
+    };
+    document.getElementById('user-btn').onclick = function() {
+      window.location.href = 'user-login.html';
+    };
+  </script>
+</body>
+</html>

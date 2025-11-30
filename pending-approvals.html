@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pending Approvals</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f6f8fa; }
+    .admin-sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #4078c0 60%, #6c5ce7 100%);
+      color: #fff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      box-shadow: 2px 0 8px rgba(80,80,180,0.10);
+    }
+    .admin-sidebar h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .admin-sidebar a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.7rem;
+      transition: background 0.2s;
+      display: block;
+    }
+    .admin-sidebar a:hover, .admin-sidebar a.active {
+      background: rgba(255,255,255,0.12);
+    }
+    .admin-main {
+      margin-left: 240px;
+      max-width: 900px;
+      padding: 2.5rem 2rem;
+    }
+    .admin-header {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #4078c0;
+      margin-bottom: 2rem;
+    }
+    .admin-search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .admin-search-bar input, .admin-search-bar select {
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .pending-list {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(80,80,180,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    table {
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(80,80,180,0.07);
+      overflow: hidden;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 600;
+      color: #4078c0;
+      border-bottom: 1px solid #eee;
+    }
+    td {
+      font-size: 1rem;
+      color: #23232b;
+    }
+    button {
+      font-size: 0.98rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      padding: 0.4rem 1rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button[onclick^="approveItem"] {
+      background: #00b894;
+      color: #fff;
+    }
+    button[onclick^="rejectItem"] {
+      background: #d63031;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-sidebar">
+  <h2>Admin Panel</h2>
+  <a href="admin-dashboard.html">Dashboard</a>
+  <a href="pending-approvals.html" class="active">Pending Approvals</a>
+  <a href="all-achievements.html">All Achievements</a>
+  <a href="manage-events.html">Manage Events</a>
+  </div>
+  <div class="admin-main">
+    <div class="admin-header">Pending Approvals</div>
+    <div class="admin-search-bar">
+      <input type="text" id="search-student" placeholder="Search by student name...">
+      <select id="filter-dept">
+        <option value="">All Departments</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="MECH">MECH</option>
+        <option value="CIVIL">CIVIL</option>
+      </select>
+      <select id="filter-status">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="pending-list" id="pending-list">
+      <table style="width:100%; border-collapse:collapse;">
+        <thead>
+          <tr style="background:#f6f8fa;">
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Student Name</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Roll No</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Activity Title</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Category</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Date</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Proof</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Status</th>
+            <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pending-table-body">
+          <!-- Table rows will be rendered here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function getStudentActivities() {
+      let data = localStorage.getItem('achievements');
+      return data ? JSON.parse(data) : [];
+    }
+    function renderPendingList() {
+      const tbody = document.getElementById('pending-table-body');
+      tbody.innerHTML = '';
+      const search = document.getElementById('search-student').value.toLowerCase();
+      const dept = document.getElementById('filter-dept').value;
+      const status = document.getElementById('filter-status').value;
+      const activities = getStudentActivities().filter(item => {
+        return (!search || (item.student && item.student.toLowerCase().includes(search))) &&
+          (!dept || (item.dept && item.dept === dept)) &&
+          (!status || item.status === status);
+      });
+      activities.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.student || 'Unknown'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.rollno || '-'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.title}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.category}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.date}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.proof ? `<a href='${item.proof}' target='_blank' style='color:#4078c0;'>View</a>` : '-'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.status}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>
+            <button onclick="approveItem(${idx})" style='background:#00b894; color:#fff; border:none; border-radius:8px; padding:0.4rem 1rem; font-weight:600; margin-right:0.5rem; cursor:pointer;'>Approve</button>
+            <button onclick="rejectItem(${idx})" style='background:#d63031; color:#fff; border:none; border-radius:8px; padding:0.4rem 1rem; font-weight:600; cursor:pointer;'>Reject</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    function approveItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Approved';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderPendingList();
+        alert(`Approved: ${activities[idx].title}`);
+      }
+    }
+    function rejectItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Rejected';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderPendingList();
+        alert(`Rejected: ${activities[idx].title}`);
+      }
+    }
+    document.getElementById('search-student').addEventListener('input', renderPendingList);
+    document.getElementById('filter-dept').addEventListener('change', renderPendingList);
+    document.getElementById('filter-status').addEventListener('change', renderPendingList);
+    renderPendingList();
+  </script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievements Portfolio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Profile Icon Trigger (outside navbar, top right corner) -->
+  <div id="profile-icon-container" style="position:fixed; top:18px; right:32px; z-index:1001;">
+    <a href="#" id="profile-icon-link" style="padding:0; display:flex; align-items:center;">
+      <img src="assets/profile-custom.png" alt="Profile Icon" class="profile-icon" id="nav-profile-icon">
+    </a>
+  </div>
+  <!-- Profile Popup Card (always below icon, styled like reference) -->
+  <div id="profile-modal" style="display:none; position:fixed; top:90px; right:32px; background:#23232b; color:#fff; min-width:340px; max-width:90vw; box-shadow:0 8px 32px rgba(80,80,180,0.18); border-radius:18px; padding:2rem 2.5rem 1.5rem 2.5rem; z-index:1002;">
+    <div id="profile-view" style="display:flex; flex-direction:column; align-items:center;">
+      <img src="assets/profile-custom.png" alt="Profile" style="width:80px; height:80px; border-radius:50%; margin-bottom:1rem; box-shadow:0 2px 8px rgba(80,80,180,0.18); border:3px solid #222; background:#fff; object-fit:cover;">
+      <div style="font-weight:700; font-size:1.25rem; margin-bottom:0.3rem;" id="profile-name-view">Dhyaneswar</div>
+      <div style="font-size:1rem; margin-bottom:1.2rem; color:#bdbdbd;" id="profile-mail-view">dhyaneswarreddy2006@gmail.com</div>
+      <button id="edit-profile-btn" style="margin-bottom:1rem; background:#4078c0; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.2rem; font-weight:600; cursor:pointer;">Edit</button>
+    </div>
+    <form id="profile-edit-form" style="display:none; flex-direction:column; align-items:center; gap:0.7rem;">
+      <input type="text" id="edit-name" placeholder="Name" style="width:90%; padding:0.5rem; border-radius:6px; border:1px solid #555;">
+      <input type="email" id="edit-mail" placeholder="Email" style="width:90%; padding:0.5rem; border-radius:6px; border:1px solid #555;">
+      <input type="text" id="edit-phone" placeholder="Phone" style="width:90%; padding:0.5rem; border-radius:6px; border:1px solid #555;">
+      <input type="text" id="edit-skills" placeholder="Skills" style="width:90%; padding:0.5rem; border-radius:6px; border:1px solid #555;">
+      <input type="text" id="edit-interests" placeholder="Interests" style="width:90%; padding:0.5rem; border-radius:6px; border:1px solid #555;">
+      <div style="display:flex; gap:1rem; margin-top:0.5rem;">
+        <button type="submit" style="background:#4078c0; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.2rem; font-weight:600; cursor:pointer;">Save</button>
+        <button type="button" id="cancel-edit-btn" style="background:#23232b; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.2rem; font-weight:600; cursor:pointer;">Cancel</button>
+      </div>
+    </form>
+    <button id="close-profile-modal" style="position:absolute; top:1rem; right:1rem; background:none; border:none; font-size:1.5rem; color:#fff; cursor:pointer;">&times;</button>
+    <div style="margin-bottom:0.5rem; margin-top:0.5rem;"><b>Phone:</b> <span id="profile-phone" style="color:#bdbdbd;">8939364361</span></div>
+    <div style="margin-bottom:0.5rem;"><b>Skills:</b> <span id="profile-skills" style="color:#bdbdbd;">Leadership, Coding</span></div>
+    <div style="margin-bottom:0.5rem;"><b>Interests:</b> <span id="profile-interests" style="color:#bdbdbd;">Music, Sports</span></div>
+  </div>
+  <script>
+    // Profile edit logic
+    const editBtn = document.getElementById('edit-profile-btn');
+    const profileView = document.getElementById('profile-view');
+    const profileEditForm = document.getElementById('profile-edit-form');
+    const cancelEditBtn = document.getElementById('cancel-edit-btn');
+    const profileNameView = document.getElementById('profile-name-view');
+    const profileMailView = document.getElementById('profile-mail-view');
+    const profilePhone = document.getElementById('profile-phone');
+    const profileSkills = document.getElementById('profile-skills');
+    const profileInterests = document.getElementById('profile-interests');
+    editBtn.addEventListener('click', function() {
+      profileView.style.display = 'none';
+      profileEditForm.style.display = 'flex';
+      document.getElementById('edit-name').value = profileNameView.textContent;
+      document.getElementById('edit-mail').value = profileMailView.textContent;
+      document.getElementById('edit-phone').value = profilePhone.textContent;
+      document.getElementById('edit-skills').value = profileSkills.textContent;
+      document.getElementById('edit-interests').value = profileInterests.textContent;
+    });
+    cancelEditBtn.addEventListener('click', function() {
+      profileEditForm.style.display = 'none';
+      profileView.style.display = 'flex';
+    });
+    profileEditForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      profileNameView.textContent = document.getElementById('edit-name').value;
+      profileMailView.textContent = document.getElementById('edit-mail').value;
+      profilePhone.textContent = document.getElementById('edit-phone').value;
+      profileSkills.textContent = document.getElementById('edit-skills').value;
+      profileInterests.textContent = document.getElementById('edit-interests').value;
+      profileEditForm.style.display = 'none';
+      profileView.style.display = 'flex';
+    });
+    // Set default profile icon if image not found
+    const profileIcon = document.getElementById('nav-profile-icon');
+    profileIcon.onerror = function() {
+      this.src = 'https://ui-avatars.com/api/?background=4078c0&color=fff&name=User';
+    };
+    // Show profile popup card below icon, outside navbar
+    const profileLink = document.getElementById('profile-icon-link');
+    const profileModal = document.getElementById('profile-modal');
+    const closeProfileModal = document.getElementById('close-profile-modal');
+    profileLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      profileModal.style.display = 'block';
+    });
+    closeProfileModal.addEventListener('click', function() {
+      profileModal.style.display = 'none';
+    });
+    document.addEventListener('click', function(e) {
+      if (profileModal.style.display === 'block' && !profileModal.contains(e.target) && e.target !== profileLink && e.target !== profileIcon) {
+        profileModal.style.display = 'none';
+      }
+    });
+  </script>
+  <nav class="topnav">
+  <a href="dashboard.html">Dashboard</a>
+  <a href="achievements.html">Achievements</a>
+  <a href="add-activity.html">Add Activity</a>
+
+  </nav>
+  <div class="main-content">
+    <div id="achievements-section" class="section-card">
+  <h2> Achievements</h2>
+  <button id="delete-all-achievements" style="background:#d63031; color:#fff; border:none; border-radius:8px; padding:0.5rem 1.2rem; font-weight:600; margin-bottom:1rem; cursor:pointer;">Delete All</button>
+      <div style="display:flex; gap:1.5rem; align-items:center; margin-bottom:1.2rem; flex-wrap:wrap;">
+        <input type="text" id="achievement-search" placeholder="Search activities..." style="padding:0.6rem 1rem; border-radius:8px; border:1px solid #ccc; min-width:220px;">
+        <select id="achievement-category-filter" style="padding:0.6rem 1rem; border-radius:8px; border:1px solid #ccc;">
+          <option value="">All Categories</option>
+          <option value="Sports">Sports</option>
+          <option value="Technical">Technical</option>
+          <option value="Cultural">Cultural</option>
+          <option value="Volunteering">Volunteering</option>
+        </select>
+        <select id="achievement-status-filter" style="padding:0.6rem 1rem; border-radius:8px; border:1px solid #ccc;">
+          <option value="">All Status</option>
+          <option value="Approved">Approved</option>
+          <option value="Pending">Pending</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div id="achievements-list" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem;"></div>
+    </div>
+  </div>
+  <script src="achievements.js"></script>
+  <script>
+    document.getElementById('delete-all-achievements').addEventListener('click', function() {
+      if (confirm('Are you sure you want to delete all achievements?')) {
+        localStorage.removeItem('achievements');
+        location.reload();
+      }
+    });
+  </script>
+</body>
+</html>

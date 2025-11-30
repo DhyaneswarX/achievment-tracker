@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f6f8fa; }
+    .admin-sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #4078c0 60%, #6c5ce7 100%);
+      color: #fff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      box-shadow: 2px 0 8px rgba(80,80,180,0.10);
+    }
+    .admin-sidebar h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .admin-sidebar a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.7rem;
+      transition: background 0.2s;
+      display: block;
+    }
+    .admin-sidebar a:hover, .admin-sidebar a.active {
+      background: rgba(255,255,255,0.12);
+    }
+    .admin-main {
+      margin-left: 240px;
+      padding: 2.5rem 2rem;
+      min-height: 100vh;
+    }
+    .admin-header {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #4078c0;
+      margin-bottom: 2rem;
+    }
+    .admin-search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .admin-search-bar input, .admin-search-bar select {
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .pending-list {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(80,80,180,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+    }
+    .pending-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 1rem 0;
+    }
+    .pending-item:last-child { border-bottom: none; }
+    .pending-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+    .pending-actions button {
+      background: #4078c0;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 0.5rem 1.2rem;
+      font-weight: 600;
+      margin-left: 0.7rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .pending-actions button.reject {
+      background: #d63031;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-sidebar">
+  <h2>Admin Panel</h2>
+  <a href="admin-dashboard.html" class="active">Dashboard</a>
+  <a href="pending-approvals.html">Pending Approvals</a>
+  <a href="all-achievements.html">All Achievements</a>
+  <a href="manage-events.html">Manage Events</a>
+  </div>
+  <div class="admin-main">
+    <div style="display:flex; justify-content:flex-end; margin-bottom:1.2rem;">
+      <a href="login.html" style="background:#4078c0; color:#fff; padding:0.5rem 1.2rem; border-radius:8px; font-weight:600; text-decoration:none; box-shadow:0 2px 8px rgba(80,80,180,0.10);">Home</a>
+    </div>
+    <div id="admin-section-dashboard">
+      <div class="admin-header">Admin Dashboard</div>
+      <div style="display:flex; gap:2rem; justify-content:center; margin-bottom:1.2rem;">
+        <div class="stat-card" id="admin-total-students" style="background:#4078c0; color:#fff; border-radius:12px; padding:0.7rem 1.2rem; min-width:110px; text-align:center; box-shadow:0 2px 6px rgba(80,80,180,0.09); display:flex; flex-direction:column; align-items:center;">
+          <div style="font-size:0.98rem; margin-bottom:0.3rem;">Total Students</div>
+          <div style="font-size:1.35rem; font-weight:700;" id="admin-total-students-count">0</div>
+        </div>
+        <div class="stat-card" id="admin-total-activities" style="background:#6c5ce7; color:#fff; border-radius:12px; padding:0.7rem 1.2rem; min-width:110px; text-align:center; box-shadow:0 2px 6px rgba(80,80,180,0.09); display:flex; flex-direction:column; align-items:center;">
+          <div style="font-size:0.98rem; margin-bottom:0.3rem;">Total Activities</div>
+          <div style="font-size:1.35rem; font-weight:700;" id="admin-total-activities-count">0</div>
+        </div>
+        <div class="stat-card" id="admin-pending-approvals" style="background:#fdcb6e; color:#23232b; border-radius:12px; padding:0.7rem 1.2rem; min-width:110px; text-align:center; box-shadow:0 2px 6px rgba(80,80,180,0.09); display:flex; flex-direction:column; align-items:center;">
+          <div style="font-size:0.98rem; margin-bottom:0.3rem;">Pending Approvals</div>
+          <div style="font-size:1.35rem; font-weight:700;" id="admin-pending-approvals-count">0</div>
+        </div>
+        <div class="stat-card" id="admin-approved-activities" style="background:#00b894; color:#fff; border-radius:12px; padding:0.7rem 1.2rem; min-width:110px; text-align:center; box-shadow:0 2px 6px rgba(80,80,180,0.09); display:flex; flex-direction:column; align-items:center;">
+          <div style="font-size:0.98rem; margin-bottom:0.3rem;">Approved Activities</div>
+          <div style="font-size:1.35rem; font-weight:700;" id="admin-approved-activities-count">0</div>
+        </div>
+      </div>
+      <div style="width:100%; display:flex; justify-content:center; margin-bottom:2.2rem;">
+        <div style="background:#fff; border-radius:14px; box-shadow:0 2px 8px rgba(80,80,180,0.10); border:1px solid #e3e7ef; padding:1.1rem 1.2rem; min-width:170px; max-width:200px; text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <div style="font-size:1rem; font-weight:600; color:#4078c0; margin-bottom:0.7rem; letter-spacing:0.5px;">Activity Status</div>
+          <canvas id="adminActivityPieChart" width="120" height="120" style="margin-bottom:0.5rem;"></canvas>
+          <div style="font-size:0.92rem; color:#888; margin-top:0.3rem;">Approved, Pending & Rejected</div>
+        </div>
+      </div>
+    </div>
+  <div id="admin-section-pending" style="display:block;">
+      <hr style="margin:2.5rem 0 2rem 0; border:none; border-top:2px solid #eee;">
+      <div class="admin-header" style="margin-bottom:1.5rem;">Pending Approvals</div>
+      <div class="admin-search-bar">
+        <input type="text" id="search-student" placeholder="Search by student name...">
+        <select id="filter-dept">
+          <option value="">All Departments</option>
+          <option value="CSE">CSE</option>
+          <option value="ECE">ECE</option>
+          <option value="MECH">MECH</option>
+          <option value="CIVIL">CIVIL</option>
+        </select>
+        <select id="filter-status">
+          <option value="">All Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Approved">Approved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+      </div>
+      <div class="pending-list" id="pending-list">
+        <table style="width:100%; border-collapse:collapse;">
+          <thead>
+            <tr style="background:#f6f8fa;">
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Student Name</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Roll No</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Activity Title</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Category</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Date</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Proof</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Status</th>
+              <th style="padding:0.7rem; border-bottom:1px solid #eee; text-align:left;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-table-body">
+            <!-- Table rows will be rendered here -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Add similar sections for achievements and events if needed -->
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Load student activities from localStorage
+    function getStudentActivities() {
+      let data = localStorage.getItem('achievements');
+      return data ? JSON.parse(data) : [];
+    }
+
+    function updateAdminStats() {
+      const activities = getStudentActivities();
+      // Unique students
+      const students = Array.from(new Set(activities.map(a => a.student).filter(Boolean)));
+      document.getElementById('admin-total-students-count').textContent = students.length;
+      document.getElementById('admin-total-activities-count').textContent = activities.length;
+      document.getElementById('admin-pending-approvals-count').textContent = activities.filter(a => a.status === 'Pending').length;
+      document.getElementById('admin-approved-activities-count').textContent = activities.filter(a => a.status === 'Approved').length;
+      renderAdminActivityPieChart();
+    }
+
+    function renderAdminActivityPieChart() {
+      const approved = parseInt(document.getElementById('admin-approved-activities-count').textContent) || 0;
+      const pending = parseInt(document.getElementById('admin-pending-approvals-count').textContent) || 0;
+      const total = parseInt(document.getElementById('admin-total-activities-count').textContent) || 0;
+      const rejected = total - approved - pending;
+      const ctx = document.getElementById('adminActivityPieChart').getContext('2d');
+      if (window.adminActivityPieChart) window.adminActivityPieChart.destroy();
+      window.adminActivityPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: ['Approved', 'Pending', 'Rejected'],
+          datasets: [{
+            data: [approved, pending, rejected > 0 ? rejected : 0],
+            backgroundColor: ['#00b894', '#fdcb6e', '#d63031'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          plugins: {
+            legend: { display: true, position: 'bottom' }
+          }
+        }
+      });
+    }
+    function renderPendingList() {
+      const tbody = document.getElementById('pending-table-body');
+      tbody.innerHTML = '';
+      const search = document.getElementById('search-student').value.toLowerCase();
+      const dept = document.getElementById('filter-dept').value;
+      const status = document.getElementById('filter-status').value;
+      const activities = getStudentActivities().filter(item => {
+        return (!search || (item.student && item.student.toLowerCase().includes(search))) &&
+          (!dept || (item.dept && item.dept === dept)) &&
+          (!status || item.status === status);
+      });
+      activities.forEach((item, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.student || 'Unknown'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.rollno || '-'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.title}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.category}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.date}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.proof ? `<a href='${item.proof}' target='_blank' style='color:#4078c0;'>View</a>` : '-'}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>${item.status}</td>
+          <td style='padding:0.7rem; border-bottom:1px solid #eee;'>
+            <button onclick="approveItem(${idx})" style='background:#00b894; color:#fff; border:none; border-radius:8px; padding:0.4rem 1rem; font-weight:600; margin-right:0.5rem; cursor:pointer;'>Approve</button>
+            <button onclick="rejectItem(${idx})" style='background:#d63031; color:#fff; border:none; border-radius:8px; padding:0.4rem 1rem; font-weight:600; cursor:pointer;'>Reject</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    function approveItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Approved';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderPendingList();
+        updateAdminStats();
+        alert(`Approved: ${activities[idx].title}`);
+      }
+    }
+    function rejectItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Rejected';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderPendingList();
+        updateAdminStats();
+        alert(`Rejected: ${activities[idx].title}`);
+      }
+    }
+    document.getElementById('search-student').addEventListener('input', renderPendingList);
+    document.getElementById('filter-dept').addEventListener('change', renderPendingList);
+    document.getElementById('filter-status').addEventListener('change', renderPendingList);
+    renderPendingList();
+    updateAdminStats();
+
+    // Section toggling logic
+    function showAdminSection(section) {
+      console.log('showAdminSection called with:', section);
+      document.getElementById('admin-section-dashboard').style.display = section === 'dashboard' ? '' : 'none';
+      document.getElementById('admin-section-pending').style.display = section === 'pending' ? '' : 'none';
+      // Update sidebar active state
+      document.querySelectorAll('.admin-sidebar a').forEach(a => a.classList.remove('active'));
+      // Find sidebar link by text content for robustness
+      document.querySelectorAll('.admin-sidebar a').forEach(a => {
+        if (section === 'dashboard' && a.textContent.trim().toLowerCase().includes('dashboard')) a.classList.add('active');
+        if (section === 'pending' && a.textContent.trim().toLowerCase().includes('pending')) a.classList.add('active');
+      });
+    }
+    // Sidebar link handlers (robust to order/extra links)
+    document.querySelectorAll('.admin-sidebar a').forEach(a => {
+      if (a.textContent.trim().toLowerCase().includes('dashboard')) {
+        a.onclick = function(e) { e.preventDefault(); showAdminSection('dashboard'); };
+      }
+      if (a.textContent.trim().toLowerCase().includes('pending')) {
+        a.onclick = function(e) { e.preventDefault(); showAdminSection('pending'); };
+      }
+    });
+    // Default: show dashboard
+    showAdminSection('dashboard');
+  </script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .login-card { max-width: 400px; margin: 80px auto; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(80,80,180,0.10); padding: 2.5rem; }
+    .login-card h2 { color: #4078c0; margin-bottom: 2rem; text-align: center; }
+    .login-card input { width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 1.2rem; }
+    .login-card button { width: 100%; background: #4078c0; color: #fff; border: none; border-radius: 8px; padding: 0.7rem; font-weight: 600; cursor: pointer; }
+    .error-msg { color: #d63031; font-weight: 600; margin-bottom: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <h2>Admin Login</h2>
+    <form id="admin-login-form">
+      <div class="error-msg" id="admin-error" style="display:none;"></div>
+      <input type="text" id="admin-username" placeholder="Admin Username" required>
+      <input type="password" id="admin-password" placeholder="Admin Password" required>
+      <button type="submit">Login as Admin</button>
+    </form>
+    <a href="admin-signup.html" style="margin-top:2rem; color:#4078c0; font-weight:600; display:block; text-align:center;">Admin Sign Up</a>
+
+  </div>
+  <script>
+    document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('admin-username').value.trim();
+      const password = document.getElementById('admin-password').value;
+      // Check admin credentials from localStorage 'admins' key
+      let admins = localStorage.getItem('admins');
+      admins = admins ? JSON.parse(admins) : [{username:'admin',password:'admin123'}];
+      const admin = admins.find(a => a.username === username && a.password === password);
+      if (admin) {
+        localStorage.setItem('loggedInAdmin', JSON.stringify(admin));
+        window.location.href = 'admin-dashboard.html';
+      } else {
+        document.getElementById('admin-error').textContent = 'Invalid admin credentials!';
+        document.getElementById('admin-error').style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>

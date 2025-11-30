@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Sign Up</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .signup-card { max-width: 400px; margin: 80px auto; background: #fff; border-radius: 14px; box-shadow: 0 2px 8px rgba(80,80,180,0.10); padding: 2.5rem; }
+    .signup-card h2 { color: #4078c0; margin-bottom: 2rem; text-align: center; }
+    .signup-card input { width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid #ccc; margin-bottom: 1.2rem; }
+    .signup-card button { width: 100%; background: #4078c0; color: #fff; border: none; border-radius: 8px; padding: 0.7rem; font-weight: 600; cursor: pointer; }
+    .success-msg { color: #00b894; font-weight: 600; margin-bottom: 1rem; text-align: center; }
+    .error-msg { color: #d63031; font-weight: 600; margin-bottom: 1rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <div style="min-height:100vh; display:flex; justify-content:center; align-items:center;">
+    <div class="signup-card">
+      <h2>Admin Sign Up</h2>
+      <form id="admin-signup-form">
+        <div class="success-msg" id="admin-success" style="display:none;"></div>
+        <div class="error-msg" id="admin-error" style="display:none;"></div>
+        <input type="text" id="admin-signup-username" placeholder="Admin Username" required>
+        <input type="password" id="admin-signup-password" placeholder="Admin Password" required>
+        <button type="submit">Sign Up as Admin</button>
+      </form>
+      <a href="admin-login.html" style="margin-top:2rem; color:#4078c0; font-weight:600; display:block; text-align:center;">Already have an account? Login</a>
+    </div>
+  </div>
+  <script>
+    document.getElementById('admin-signup-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const username = document.getElementById('admin-signup-username').value.trim();
+      const password = document.getElementById('admin-signup-password').value;
+      let admins = localStorage.getItem('admins');
+      admins = admins ? JSON.parse(admins) : [{username:'admin',password:'admin123'}];
+      if (admins.find(a => a.username === username)) {
+        document.getElementById('admin-error').textContent = 'Username already exists!';
+        document.getElementById('admin-error').style.display = 'block';
+        document.getElementById('admin-success').style.display = 'none';
+        return;
+      }
+      admins.push({username, password});
+      localStorage.setItem('admins', JSON.stringify(admins));
+      document.getElementById('admin-success').textContent = 'Admin account created successfully!';
+      document.getElementById('admin-success').style.display = 'block';
+      document.getElementById('admin-error').style.display = 'none';
+      document.getElementById('admin-signup-form').reset();
+    });
+  </script>
+</body>
+</html>

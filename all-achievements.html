@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Achievements</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f6f8fa; }
+    .admin-sidebar {
+      width: 220px;
+      background: linear-gradient(135deg, #4078c0 60%, #6c5ce7 100%);
+      color: #fff;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem 1rem 1rem 1rem;
+      box-shadow: 2px 0 8px rgba(80,80,180,0.10);
+    }
+    .admin-sidebar h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .admin-sidebar a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.08rem;
+      font-weight: 600;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 0.7rem;
+      transition: background 0.2s;
+      display: block;
+    }
+    .admin-sidebar a:hover, .admin-sidebar a.active {
+      background: rgba(255,255,255,0.12);
+    }
+    .admin-main {
+      margin-left: 240px;
+      max-width: 1100px;
+      padding: 2.5rem 2rem;
+    }
+    .admin-header {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #4078c0;
+      margin-bottom: 2rem;
+    }
+    .admin-search-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      align-items: center;
+    }
+    .admin-search-bar input, .admin-search-bar select {
+      padding: 0.7rem;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+    }
+    .achievements-list {
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(80,80,180,0.10);
+      padding: 2rem;
+      margin-bottom: 2rem;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 4px rgba(80,80,180,0.07);
+      overflow: hidden;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 600;
+      color: #4078c0;
+      border-bottom: 1px solid #eee;
+      padding: 0.7rem;
+      text-align: left;
+    }
+    td {
+      font-size: 1rem;
+      color: #23232b;
+      padding: 0.7rem;
+      border-bottom: 1px solid #eee;
+    }
+    .status-approved { color: #00b894; font-weight: 700; }
+    .status-pending { color: #fdcb6e; font-weight: 700; }
+    .status-rejected { color: #d63031; font-weight: 700; }
+    .action-btn {
+      font-size: 0.98rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      padding: 0.4rem 1rem;
+      margin-right: 0.5rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .action-approve { background: #00b894; color: #fff; }
+    .action-reject { background: #d63031; color: #fff; }
+    .action-edit { background: #4078c0; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="admin-sidebar">
+  <h2>Admin Panel</h2>
+  <a href="admin-dashboard.html">Dashboard</a>
+  <a href="pending-approvals.html">Pending Approvals</a>
+  <a href="all-achievements.html" class="active">All Achievements</a>
+  <a href="manage-events.html">Manage Events</a>
+  </div>
+  <div class="admin-main">
+    <div class="admin-header">All Achievements</div>
+    <div class="admin-search-bar">
+      <input type="text" id="search-student" placeholder="Search by student name...">
+      <select id="filter-dept">
+        <option value="">All Departments</option>
+        <option value="CSE">CSE</option>
+        <option value="ECE">ECE</option>
+        <option value="MECH">MECH</option>
+        <option value="CIVIL">CIVIL</option>
+      </select>
+      <select id="filter-category">
+        <option value="">All Categories</option>
+        <option value="Sports">Sports</option>
+        <option value="Tech">Tech</option>
+        <option value="Cultural">Cultural</option>
+        <option value="Volunteering">Volunteering</option>
+      </select>
+      <select id="filter-status">
+        <option value="">All Status</option>
+        <option value="Pending">Pending</option>
+        <option value="Approved">Approved</option>
+        <option value="Rejected">Rejected</option>
+      </select>
+    </div>
+    <div class="achievements-list" id="achievements-list">
+      <table>
+        <thead>
+          <tr>
+            <th>Student Name</th>
+            <th>Roll Number</th>
+            <th>Department & Year</th>
+            <th>Activity Title</th>
+            <th>Category</th>
+            <th>Date</th>
+            <th>Proof</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="achievements-table-body">
+          <!-- Table rows will be rendered here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <script>
+    function getStudentActivities() {
+      let data = localStorage.getItem('achievements');
+      return data ? JSON.parse(data) : [];
+    }
+    function renderAchievementsList() {
+      const tbody = document.getElementById('achievements-table-body');
+      tbody.innerHTML = '';
+      const search = document.getElementById('search-student').value.toLowerCase();
+      const dept = document.getElementById('filter-dept').value;
+      const category = document.getElementById('filter-category').value;
+      const status = document.getElementById('filter-status').value;
+      const activities = getStudentActivities().filter(item => {
+        return (!search || (item.student && item.student.toLowerCase().includes(search))) &&
+          (!dept || (item.dept && item.dept === dept)) &&
+          (!category || (item.category && item.category === category)) &&
+          (!status || item.status === status);
+      });
+      activities.forEach((item, idx) => {
+        const statusClass = item.status === 'Approved' ? 'status-approved' : item.status === 'Pending' ? 'status-pending' : 'status-rejected';
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${item.student || 'Unknown'}</td>
+          <td>${item.rollno || '-'}</td>
+          <td>${item.dept || '-'} ${item.year || '-'}</td>
+          <td>${item.title}</td>
+          <td>${item.category}</td>
+          <td>${item.date}</td>
+          <td>${item.proof ? `<a href='${item.proof}' target='_blank' style='color:#4078c0;'>View</a>` : '-'}</td>
+          <td class='${statusClass}'>${item.status}</td>
+          <td>
+            <button class='action-btn action-approve' onclick="approveItem(${idx})">approve</button><br>
+            <button class='action-btn action-reject' onclick="rejectItem(${idx})">reject</button>
+            <button class='action-btn action-edit' onclick="editItem(${idx})">edit</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+    function approveItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Approved';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderAchievementsList();
+        alert(`Approved: ${activities[idx].title}`);
+      }
+    }
+    function rejectItem(idx) {
+      let activities = getStudentActivities();
+      if (activities[idx]) {
+        activities[idx].status = 'Rejected';
+        localStorage.setItem('achievements', JSON.stringify(activities));
+        renderAchievementsList();
+        alert(`Rejected: ${activities[idx].title}`);
+      }
+    }
+    function editItem(idx) {
+      alert('Edit feature coming soon!');
+    }
+    document.getElementById('search-student').addEventListener('input', renderAchievementsList);
+    document.getElementById('filter-dept').addEventListener('change', renderAchievementsList);
+    document.getElementById('filter-category').addEventListener('change', renderAchievementsList);
+    document.getElementById('filter-status').addEventListener('change', renderAchievementsList);
+    renderAchievementsList();
+  </script>
+</body>
+</html>
